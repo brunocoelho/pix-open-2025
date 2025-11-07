@@ -24,8 +24,16 @@ export class PlayersService {
     return await newPlayer.save();
   }
 
+  async createMultiple(players: CreatePlayerDto[]): Promise<Player[]> {
+    return await this.playerModel.insertMany(players);
+  }
+
   async delete(id: string): Promise<Player | null> {
     return await this.playerModel.findByIdAndDelete(id).exec();
+  }
+
+  async deleteAll() {
+    return await this.playerModel.deleteMany();
   }
 
   async update(id: string, player: CreatePlayerDto): Promise<Player | null> {

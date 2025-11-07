@@ -30,9 +30,21 @@ export class PlayersController {
     return this.playersService.create(createPlayerDto);
   }
 
+  @Post('multiple')
+  createMultiple(
+    @Body() createPlayerDtos: CreatePlayerDto[],
+  ): Promise<Player[]> {
+    return this.playersService.createMultiple(createPlayerDtos);
+  }
+
   @Delete(':id')
   delete(@Param('id') id: string): Promise<Player | null> {
     return this.playersService.delete(id);
+  }
+
+  @Delete()
+  deleteAll(): Promise<{ deletedCount?: number }> {
+    return this.playersService.deleteAll();
   }
 
   @Put(':id')

@@ -15,30 +15,31 @@ export class PlayersService {
     return await this.playerModel.find();
   }
 
-  async findOne(id: string): Promise<Player | null> {
-    return await this.playerModel.findOne({ _id: id });
-  }
-
-  async create(player: CreatePlayerDto): Promise<Player> {
-    const newPlayer = new this.playerModel(player);
-    return await newPlayer.save();
-  }
-
   async createMultiple(players: CreatePlayerDto[]): Promise<Player[]> {
+    await this.deleteAll();
     return await this.playerModel.insertMany(players);
-  }
-
-  async delete(id: string): Promise<Player | null> {
-    return await this.playerModel.findByIdAndDelete(id).exec();
   }
 
   async deleteAll() {
     return await this.playerModel.deleteMany();
   }
 
-  async update(id: string, player: CreatePlayerDto): Promise<Player | null> {
-    return await this.playerModel
-      .findByIdAndUpdate(id, player, { new: true })
-      .exec();
-  }
+  // async findOne(id: string): Promise<Player | null> {
+  //   return await this.playerModel.findOne({ _id: id });
+  // }
+
+  // async create(player: CreatePlayerDto): Promise<Player> {
+  //   const newPlayer = new this.playerModel(player);
+  //   return await newPlayer.save();
+  // }
+
+  // async delete(id: string): Promise<Player | null> {
+  //   return await this.playerModel.findByIdAndDelete(id).exec();
+  // }
+
+  // async update(id: string, player: CreatePlayerDto): Promise<Player | null> {
+  //   return await this.playerModel
+  //     .findByIdAndUpdate(id, player, { new: true })
+  //     .exec();
+  // }
 }

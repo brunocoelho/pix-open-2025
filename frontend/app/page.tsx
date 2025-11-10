@@ -1,96 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import * as Tabs from "@radix-ui/react-tabs";
-import {
-  createPlayers,
-  createDoubles,
-  type Player,
-  type Double,
-  getPlayers,
-  getDoubles,
-} from "@/lib/api";
 import PlayersTab from "./components/players";
+import DoublesTab from "./components/doubles";
 
 export default function BTChampionship() {
-  const [doubles, setDoubles] = useState<Double[]>([]);
-  const [showSuccessMessage, setShowSuccessMessage] = useState("");
-  const [group1Players, setGroup1Players] = useState<Array<Player | null>>(
-    Array(16).fill(null)
-  );
-
-  const [group2Players, setGroup2Players] = useState<Array<Player | null>>(
-    Array(16).fill(null)
-  );
-
-  useQuery({
-    queryKey: ["players"],
-    queryFn: async () => {
-      const { group1, group2 } = await getPlayers();
-      setGroup1Players(group1);
-      setGroup2Players(group2);
-      return { group1, group2 };
-    },
-  });
-
-  useQuery({
-    queryKey: ["doubles"],
-    queryFn: async () => {
-      const doubles = await getDoubles();
-      setDoubles(doubles);
-      return doubles;
-    },
-  });
-
-  const createPlayersMutation = useMutation({
-    mutationFn: createPlayers,
-    onSuccess: ({ group1, group2 }) => {
-      setGroup1Players(group1);
-      setGroup2Players(group2);
-      setShowSuccessMessage("Jogadores salvos com sucesso.");
-      setTimeout(() => {
-        setShowSuccessMessage("");
-      }, 3000);
-    },
-    onError: (error) => {
-      alert(`Erro ao criar jogadores: ${error.message}`);
-    },
-  });
-
-  const createDoublesMutation = useMutation({
-    mutationFn: createDoubles,
-    onSuccess: (data) => {
-      // alert("Duplas criadas com sucesso!");
-      setDoubles(data);
-      setShowSuccessMessage("Duplas criadas com sucesso.");
-      setTimeout(() => {
-        setShowSuccessMessage("");
-      }, 3000);
-    },
-    onError: (error) => {
-      alert(`Erro ao criar duplas: ${error.message}`);
-    },
-  });
-
-  const handleCreatePlayers = () => {
-    const players: Player[] = [];
-
-    group1Players.forEach((player) => {
-      if (player) players.push(player);
-    });
-
-    group2Players.forEach((player) => {
-      if (player) players.push(player);
-    });
-
-    createPlayersMutation.mutate(players);
-  };
-
-  const handleCreateDoubles = () => {
-    createDoublesMutation.mutate();
-  };
-
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-md mx-auto">
@@ -122,43 +36,10 @@ export default function BTChampionship() {
 
           <Tabs.Content value="jogadores" className="space-y-6">
             <PlayersTab />
+          </Tabs.Content>
 
-            {/* Doubles Table */}
-            {doubles.length > 0 && (
-              <div className="mt-8">
-                <h2 className="text-lg font-semibold mb-4">Duplas</h2>
-                <div className="border border-border rounded-lg overflow-hidden">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="bg-muted">
-                        <th className="py-3 px-4 text-left text-sm font-medium">
-                          #
-                        </th>
-                        <th className="py-3 px-4 text-left text-sm font-medium">
-                          Pro
-                        </th>
-                        <th className="py-3 px-4 text-left text-sm font-medium">
-                          Pangaré
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {doubles.map((double, index) => (
-                        <tr key={index} className="border-t border-border">
-                          <td className="py-3 px-4 text-sm">{index + 1}</td>
-                          <td className="py-3 px-4 text-sm">
-                            {double.player1.name}
-                          </td>
-                          <td className="py-3 px-4 text-sm">
-                            {double.player2.name}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
+          <Tabs.Content value="duplas" className="space-y-6">
+            <DoublesTab />
           </Tabs.Content>
 
           <Tabs.Content value="partidas">

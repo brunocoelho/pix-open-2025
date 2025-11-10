@@ -119,11 +119,11 @@ export default function PlayersTab() {
       </div>
       <div className="grid grid-cols-2 gap-3">
         <button
-          onClick={handleCreatePlayers}
-          disabled={createPlayersMutation.isPending}
           className="py-3 px-4 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={createPlayersMutation.isPending}
+          onClick={handleCreatePlayers}
         >
-          {createPlayersMutation.isPending ? "Salvando..." : "Salvar jogadores"}
+          Salvar jogadores
         </button>
         {showSuccessMessage && (
           <Callout.Root>

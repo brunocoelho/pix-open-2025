@@ -14,7 +14,6 @@ export class PlayersService {
 
   async findAll(): Promise<ReturnType<typeof getGroupPlayers>> {
     const players = await this.playerModel.find();
-    console.log('=== get request', getGroupPlayers(players));
     return getGroupPlayers(players);
   }
 

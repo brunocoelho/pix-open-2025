@@ -34,15 +34,27 @@ export default function BTChampionship() {
             </Tabs.Trigger>
           </Tabs.List>
 
-          <Tabs.Content value="jogadores" className="space-y-6">
+          <Tabs.Content
+            value="jogadores"
+            className="space-y-6 data-[state=inactive]:hidden"
+            forceMount
+          >
             <PlayersTab />
           </Tabs.Content>
 
-          <Tabs.Content value="duplas" className="space-y-6">
+          <Tabs.Content
+            value="duplas"
+            className="space-y-6 data-[state=inactive]:hidden"
+            forceMount
+          >
             <DoublesTab />
           </Tabs.Content>
 
-          <Tabs.Content value="partidas">
+          <Tabs.Content
+            value="partidas"
+            className="data-[state=inactive]:hidden"
+            forceMount
+          >
             <div className="text-center py-12 text-muted-foreground">
               <p>Em breve: visualização das partidas</p>
             </div>

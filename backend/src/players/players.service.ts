@@ -1,4 +1,5 @@
 import { CreatePlayerDto } from './dto/create-player.dto';
+import { getGroupPlayers } from 'src/utils/players';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IPlayer } from './interfaces/player.interface';
@@ -11,13 +12,19 @@ export class PlayersService {
     @InjectModel(Player.name) private readonly playerModel: Model<IPlayer>,
   ) {}
 
-  async findAll(): Promise<Player[]> {
-    return await this.playerModel.find();
+  async findAll(): Promise<ReturnType<typeof getGroupPlayers>> {
+    const players = await this.playerModel.find();
+    console.log('=== get request', getGroupPlayers(players));
+    return getGroupPlayers(players);
   }
 
-  async createMultiple(players: CreatePlayerDto[]): Promise<Player[]> {
+  async createMultiple(
+    players: CreatePlayerDto[],
+  ): Promise<ReturnType<typeof getGroupPlayers>> {
     await this.deleteAll();
-    return await this.playerModel.insertMany(players);
+    const playersWithNames = players.filter((player) => player.name);
+    const createdPlayers = await this.playerModel.insertMany(playersWithNames);
+    return getGroupPlayers(createdPlayers);
   }
 
   async deleteAll() {

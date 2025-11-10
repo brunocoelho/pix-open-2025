@@ -1,21 +1,21 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { PlayersService } from './players.service';
-import { Player } from './players.schema';
 import { CreatePlayerDto } from './dto/create-player.dto';
+import { getGroupPlayers } from 'src/utils/players';
 
 @Controller('players')
 export class PlayersController {
   constructor(private readonly playersService: PlayersService) {}
 
   @Get()
-  findAll(): Promise<Player[]> {
+  findAll(): Promise<ReturnType<typeof getGroupPlayers>> {
     return this.playersService.findAll();
   }
 
   @Post('multiple')
   createMultiple(
     @Body() createPlayerDtos: CreatePlayerDto[],
-  ): Promise<Player[]> {
+  ): Promise<ReturnType<typeof getGroupPlayers>> {
     return this.playersService.createMultiple(createPlayerDtos);
   }
 

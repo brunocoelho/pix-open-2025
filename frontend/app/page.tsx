@@ -1,28 +1,59 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import * as Tabs from "@radix-ui/react-tabs";
+import { Callout } from "@radix-ui/themes";
 import {
   createPlayers,
   createDoubles,
   type Player,
   type Double,
+  getPlayers,
+  getDoubles,
 } from "@/lib/api";
 
 export default function BTChampionship() {
-  const [group1Players, setGroup1Players] = useState<string[]>(
-    Array(16).fill("")
-  );
-  const [group2Players, setGroup2Players] = useState<string[]>(
-    Array(16).fill("")
-  );
   const [doubles, setDoubles] = useState<Double[]>([]);
-  console.log("=== doubles", doubles);
+  const [showSuccessMessage, setShowSuccessMessage] = useState("");
+  const [group1Players, setGroup1Players] = useState<Array<Player | null>>(
+    Array(16).fill(null)
+  );
+
+  const [group2Players, setGroup2Players] = useState<Array<Player | null>>(
+    Array(16).fill(null)
+  );
+
+  // console.log("=== doubles", doubles);
+
+  useQuery({
+    queryKey: ["players"],
+    queryFn: async () => {
+      const { group1, group2 } = await getPlayers();
+      setGroup1Players(group1);
+      setGroup2Players(group2);
+      return { group1, group2 };
+    },
+  });
+
+  useQuery({
+    queryKey: ["doubles"],
+    queryFn: async () => {
+      const doubles = await getDoubles();
+      setDoubles(doubles);
+      return doubles;
+    },
+  });
+
   const createPlayersMutation = useMutation({
     mutationFn: createPlayers,
-    onSuccess: () => {
-      alert("Jogadores criados com sucesso!");
+    onSuccess: ({ group1, group2 }) => {
+      setGroup1Players(group1);
+      setGroup2Players(group2);
+      setShowSuccessMessage("Jogadores salvos com sucesso.");
+      setTimeout(() => {
+        setShowSuccessMessage("");
+      }, 3000);
     },
     onError: (error) => {
       alert(`Erro ao criar jogadores: ${error.message}`);
@@ -32,8 +63,12 @@ export default function BTChampionship() {
   const createDoublesMutation = useMutation({
     mutationFn: createDoubles,
     onSuccess: (data) => {
+      // alert("Duplas criadas com sucesso!");
       setDoubles(data);
-      alert("Duplas criadas com sucesso!");
+      setShowSuccessMessage("Duplas criadas com sucesso.");
+      setTimeout(() => {
+        setShowSuccessMessage("");
+      }, 3000);
     },
     onError: (error) => {
       alert(`Erro ao criar duplas: ${error.message}`);
@@ -43,22 +78,13 @@ export default function BTChampionship() {
   const handleCreatePlayers = () => {
     const players: Player[] = [];
 
-    group1Players.forEach((name) => {
-      if (name.trim()) {
-        players.push({ name: name.trim(), group: 1 });
-      }
+    group1Players.forEach((player) => {
+      if (player) players.push(player);
     });
 
-    group2Players.forEach((name) => {
-      if (name.trim()) {
-        players.push({ name: name.trim(), group: 2 });
-      }
+    group2Players.forEach((player) => {
+      if (player) players.push(player);
     });
-
-    if (players.length % 2 !== 0) {
-      alert("Adicione um número par de jogadores");
-      return;
-    }
 
     createPlayersMutation.mutate(players);
   };
@@ -70,7 +96,9 @@ export default function BTChampionship() {
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-md mx-auto">
-        <h1 className="text-2xl font-bold text-center mb-6">Pix Open 2025</h1>
+        <h1 className="text-2xl font-bold text-center mb-6">
+          Pix Open 2025 🎾
+        </h1>
 
         <Tabs.Root defaultValue="jogadores" className="w-full">
           <Tabs.List className="flex border-b border-border mb-6">
@@ -101,10 +129,16 @@ export default function BTChampionship() {
                     <input
                       key={`group1-${index}`}
                       type="text"
-                      value={player}
+                      value={player?.name || ""}
                       onChange={(e) => {
                         const newPlayers = [...group1Players];
-                        newPlayers[index] = e.target.value;
+                        newPlayers[index] =
+                          newPlayers[index] ||
+                          ({
+                            name: "",
+                            group: 1,
+                          } as Player);
+                        newPlayers[index].name = (e.target.value ?? "").trim();
                         setGroup1Players(newPlayers);
                       }}
                       placeholder={`${index + 1}.`}
@@ -125,10 +159,16 @@ export default function BTChampionship() {
                     <input
                       key={`group2-${index}`}
                       type="text"
-                      value={player}
+                      value={player?.name || ""}
                       onChange={(e) => {
                         const newPlayers = [...group2Players];
-                        newPlayers[index] = e.target.value;
+                        newPlayers[index] =
+                          newPlayers[index] ||
+                          ({
+                            name: "",
+                            group: 2,
+                          } as Player);
+                        newPlayers[index].name = e.target.value;
                         setGroup2Players(newPlayers);
                       }}
                       placeholder={`${index + 1}.`}
@@ -139,6 +179,12 @@ export default function BTChampionship() {
               </div>
             </div>
 
+            {showSuccessMessage && (
+              <Callout.Root>
+                <Callout.Text>{showSuccessMessage}</Callout.Text>
+              </Callout.Root>
+            )}
+
             {/* Buttons */}
             <div className="grid grid-cols-2 gap-3">
               <button
@@ -147,8 +193,8 @@ export default function BTChampionship() {
                 className="py-3 px-4 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {createPlayersMutation.isPending
-                  ? "Criando..."
-                  : "Criar jogadores"}
+                  ? "Salvando..."
+                  : "Salvar jogadores"}
               </button>
               <button
                 onClick={handleCreateDoubles}
@@ -156,8 +202,8 @@ export default function BTChampionship() {
                 className="py-3 px-4 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {createDoublesMutation.isPending
-                  ? "Criando..."
-                  : "Criar duplas"}
+                  ? "Gerando duplas..."
+                  : "Gerar duplas"}
               </button>
             </div>
 

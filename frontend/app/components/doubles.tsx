@@ -39,25 +39,8 @@ export default function DoublesTab() {
 
   return (
     <div>
-      <div className="grid grid-cols-2 gap-3">
-        <button
-          className="py-3 px-4 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={createDoublesMutation.isPending}
-          onClick={handleCreateDoubles}
-        >
-          Gerar duplas
-        </button>
-
-        {showSuccessMessage && (
-          <Callout.Root>
-            <Callout.Text>{showSuccessMessage}</Callout.Text>
-          </Callout.Root>
-        )}
-      </div>
-
       {doubles.length > 0 && (
         <div className="mt-8">
-          <h2 className="text-lg font-semibold mb-4">Duplas</h2>
           <div className="border border-border rounded-lg overflow-hidden">
             <table className="w-full">
               <thead>
@@ -84,6 +67,21 @@ export default function DoublesTab() {
           </div>
         </div>
       )}
+      <div className="grid grid-cols-2 gap-3 pt-6">
+        <button
+          className="py-3 px-4 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={createDoublesMutation.isPending}
+          onClick={handleCreateDoubles}
+        >
+          Gerar duplas
+        </button>
+
+        {showSuccessMessage && (
+          <Callout.Root>
+            <Callout.Text>{showSuccessMessage}</Callout.Text>
+          </Callout.Root>
+        )}
+      </div>
     </div>
   );
 }

@@ -18,11 +18,7 @@ interface Match {
   winner?: string;
 }
 
-interface TournamentBracketProps {
-  doubles: Double[];
-}
-
-export default function TournamentBracket() {
+export default function TournamentBracket({ isAdmin }: { isAdmin: boolean }) {
   const [matches, setMatches] = useState<Match[]>(initializeMatches());
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -82,6 +78,7 @@ export default function TournamentBracket() {
   };
 
   const handleMatchClick = (match: Match) => {
+    if (!isAdmin) return;
     setSelectedMatch(match);
     setDialogOpen(true);
   };

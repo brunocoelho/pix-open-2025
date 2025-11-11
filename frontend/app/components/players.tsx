@@ -5,7 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Callout } from "@radix-ui/themes";
 import { createPlayers, type Player, getPlayers } from "@/lib/api";
 
-export default function PlayersTab() {
+export default function PlayersTab({ isAdmin }: { isAdmin: boolean }) {
   const [showSuccessMessage, setShowSuccessMessage] = useState("");
   const [group1Players, setGroup1Players] = useState<Array<Player | null>>(
     Array(16).fill(null)
@@ -66,6 +66,7 @@ export default function PlayersTab() {
           <div className="space-y-2">
             {group1Players.map((player, index) => (
               <input
+                disabled={!isAdmin}
                 key={`group1-${index}`}
                 type="text"
                 value={player?.name || ""}
@@ -96,6 +97,7 @@ export default function PlayersTab() {
           <div className="space-y-2">
             {group2Players.map((player, index) => (
               <input
+                disabled={!isAdmin}
                 key={`group2-${index}`}
                 type="text"
                 value={player?.name || ""}
@@ -117,20 +119,22 @@ export default function PlayersTab() {
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3">
-        <button
-          className="py-3 px-4 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={createPlayersMutation.isPending}
-          onClick={handleCreatePlayers}
-        >
-          Salvar jogadores
-        </button>
-        {showSuccessMessage && (
-          <Callout.Root>
-            <Callout.Text>{showSuccessMessage}</Callout.Text>
-          </Callout.Root>
-        )}
-      </div>
+      {isAdmin && (
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            className="py-3 px-4 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={createPlayersMutation.isPending}
+            onClick={handleCreatePlayers}
+          >
+            Salvar jogadores
+          </button>
+          {showSuccessMessage && (
+            <Callout.Root>
+              <Callout.Text>{showSuccessMessage}</Callout.Text>
+            </Callout.Root>
+          )}
+        </div>
+      )}
     </>
   );
 }

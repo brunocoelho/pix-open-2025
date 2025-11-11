@@ -6,6 +6,9 @@ import DoublesTab from "./components/doubles";
 import TournamentBracket from "./components/tournamentBracket";
 
 export default function BTChampionship() {
+  const searchParams = new URLSearchParams(window.location.search);
+  const isAdmin = searchParams.get("admin") === "true";
+
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-md mx-auto">
@@ -40,7 +43,7 @@ export default function BTChampionship() {
             className="space-y-6 data-[state=inactive]:hidden"
             forceMount
           >
-            <PlayersTab />
+            <PlayersTab isAdmin={isAdmin} />
           </Tabs.Content>
 
           <Tabs.Content
@@ -48,7 +51,7 @@ export default function BTChampionship() {
             className="space-y-6 data-[state=inactive]:hidden"
             forceMount
           >
-            <DoublesTab />
+            <DoublesTab isAdmin={isAdmin} />
           </Tabs.Content>
 
           <Tabs.Content
@@ -56,7 +59,7 @@ export default function BTChampionship() {
             className="data-[state=inactive]:hidden"
             forceMount
           >
-            <TournamentBracket />
+            <TournamentBracket isAdmin={isAdmin} />
           </Tabs.Content>
         </Tabs.Root>
       </div>

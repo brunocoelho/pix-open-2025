@@ -5,7 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { createDoubles, type Double, getDoubles } from "@/lib/api";
 import { Callout } from "@radix-ui/themes";
 
-export default function DoublesTab() {
+export default function DoublesTab({ isAdmin }: { isAdmin: boolean }) {
   const [doubles, setDoubles] = useState<Double[]>([]);
   const [showSuccessMessage, setShowSuccessMessage] = useState("");
 
@@ -67,21 +67,23 @@ export default function DoublesTab() {
           </div>
         </div>
       )}
-      <div className="grid grid-cols-2 gap-3 pt-6">
-        <button
-          className="py-3 px-4 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={createDoublesMutation.isPending}
-          onClick={handleCreateDoubles}
-        >
-          Gerar duplas
-        </button>
+      {isAdmin && (
+        <div className="grid grid-cols-2 gap-3 pt-6">
+          <button
+            className="py-3 px-4 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={createDoublesMutation.isPending}
+            onClick={handleCreateDoubles}
+          >
+            Gerar duplas
+          </button>
 
-        {showSuccessMessage && (
-          <Callout.Root>
-            <Callout.Text>{showSuccessMessage}</Callout.Text>
-          </Callout.Root>
-        )}
-      </div>
+          {showSuccessMessage && (
+            <Callout.Root>
+              <Callout.Text>{showSuccessMessage}</Callout.Text>
+            </Callout.Root>
+          )}
+        </div>
+      )}
     </div>
   );
 }

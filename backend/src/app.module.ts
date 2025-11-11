@@ -1,13 +1,15 @@
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ConfigModule } from '@nestjs/config';
+import { DoublesModule } from './doubles/doubles.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PlayersModule } from './players/players.module';
-import { DoublesModule } from './doubles/doubles.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://127.0.0.1:27017/pix-open-2025'),
+    ConfigModule.forRoot(),
+    MongooseModule.forRoot(process.env.MONGODB_URI ?? 'mongodb://'),
     PlayersModule,
     DoublesModule,
   ],

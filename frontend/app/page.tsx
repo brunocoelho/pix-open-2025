@@ -3,6 +3,7 @@
 import * as Tabs from "@radix-ui/react-tabs";
 import PlayersTab from "./components/players";
 import DoublesTab from "./components/doubles";
+import TournamentBracket from "./components/tournamentBracket";
 
 export default function BTChampionship() {
   return (
@@ -55,9 +56,7 @@ export default function BTChampionship() {
             className="data-[state=inactive]:hidden"
             forceMount
           >
-            <div className="text-center py-12 text-muted-foreground">
-              <p>Em breve: visualização das partidas</p>
-            </div>
+            <TournamentBracket />
           </Tabs.Content>
         </Tabs.Root>
       </div>

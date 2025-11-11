@@ -1,12 +1,13 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import * as Tabs from "@radix-ui/react-tabs";
-import PlayersTab from "./components/players";
 import DoublesTab from "./components/doubles";
+import PlayersTab from "./components/players";
 import TournamentBracket from "./components/tournamentBracket";
 
 export default function BTChampionship() {
-  const searchParams = new URLSearchParams(window.location.search);
+  const searchParams = useSearchParams();
   const isAdmin = searchParams.get("admin") === "true";
 
   return (

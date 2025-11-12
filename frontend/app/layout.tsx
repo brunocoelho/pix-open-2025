@@ -11,7 +11,7 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Pix Open 2025",
-  description: "Gerenciador de campeonato de BT",
+  description: "Arena do Brasa",
   generator: "v0.app",
   icons: {
     icon: [

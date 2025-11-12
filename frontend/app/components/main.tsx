@@ -17,17 +17,6 @@ export default function Main() {
           Pix Open 2025 🎾
         </h1>
 
-        {/* <div className="flex justify-center mb-6">
-          <Image
-            alt="Next.js logo"
-            className="dark:invert"
-            height={50}
-            priority
-            src="/logo-brasa.jpg"
-            width={50}
-          />
-        </div> */}
-
         <Tabs.Root defaultValue="jogadores" className="w-full">
           <Tabs.List className="flex border-b border-border mb-6">
             <Tabs.Trigger

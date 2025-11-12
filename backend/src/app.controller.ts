@@ -9,4 +9,9 @@ export class AppController {
   index(): string {
     return this.appService.index();
   }
+
+  @Get('health')
+  healthCheck() {
+    return { status: 'ok', timestamp: new Date() };
+  }
 }

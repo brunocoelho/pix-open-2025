@@ -53,8 +53,12 @@ export default function DoublesTab({ isAdmin }: { isAdmin: boolean }) {
                 {doubles.map((double, index) => (
                   <tr key={index} className="border-t border-border">
                     <td className="py-3 px-4 text-sm">{index + 1}</td>
-                    <td className="py-3 px-4 text-sm">{double.player1.name}</td>
-                    <td className="py-3 px-4 text-sm">{double.player2.name}</td>
+                    <td className="py-3 px-4 text-sm">
+                      {double.player1?.name}
+                    </td>
+                    <td className="py-3 px-4 text-sm">
+                      {double.player2?.name}
+                    </td>
                   </tr>
                 ))}
               </tbody>

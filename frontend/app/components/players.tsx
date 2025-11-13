@@ -7,20 +7,17 @@ import { createPlayers, type Player, getPlayers } from "@/lib/api";
 
 export default function PlayersTab({ isAdmin }: { isAdmin: boolean }) {
   const [showSuccessMessage, setShowSuccessMessage] = useState("");
-  const [group1Players, setGroup1Players] = useState<Array<Player | null>>(
-    Array(16).fill(null)
-  );
-
-  const [group2Players, setGroup2Players] = useState<Array<Player | null>>(
-    Array(16).fill(null)
+  const [players, setPlayers] = useState<Array<Player | null>>(
+    Array(32).fill(null)
   );
 
   useQuery({
     queryKey: ["players"],
     queryFn: async () => {
       const { group1, group2 } = await getPlayers();
-      setGroup1Players(group1);
-      setGroup2Players(group2);
+      // Combine all groups into one list
+      const allPlayers = [...group1, ...group2];
+      setPlayers(allPlayers);
       return { group1, group2 };
     },
   });
@@ -28,8 +25,8 @@ export default function PlayersTab({ isAdmin }: { isAdmin: boolean }) {
   const createPlayersMutation = useMutation({
     mutationFn: createPlayers,
     onSuccess: ({ group1, group2 }) => {
-      setGroup1Players(group1);
-      setGroup2Players(group2);
+      const allPlayers = [...group1, ...group2];
+      setPlayers(allPlayers);
       setShowSuccessMessage("Jogadores salvos.");
       setTimeout(() => {
         setShowSuccessMessage("");
@@ -41,78 +38,68 @@ export default function PlayersTab({ isAdmin }: { isAdmin: boolean }) {
   });
 
   const handleCreatePlayers = () => {
-    const players: Player[] = [];
+    const playersList: Player[] = [];
 
-    group1Players.forEach((player) => {
-      if (player) players.push(player);
+    players.forEach((player) => {
+      if (player && player.name) playersList.push(player);
     });
 
-    group2Players.forEach((player) => {
-      if (player) players.push(player);
-    });
-
-    createPlayersMutation.mutate(players);
+    createPlayersMutation.mutate(playersList);
   };
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-4">
-        {/* Group 1 */}
-        <div className="space-y-3">
-          <div>
-            <h2 className="text-sm font-semibold mb-1">Grupo 1</h2>
-            <p className="text-xs text-muted-foreground">Profissionais</p>
-          </div>
+      <div className="space-y-3">
+        <div>
+          <h2 className="text-sm font-semibold mb-1">Jogadores</h2>
+          <p className="text-xs text-muted-foreground">
+            Lista de todos os jogadores
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            {group1Players.map((player, index) => (
+            {players.slice(0, 16).map((player, index) => (
               <input
                 disabled={!isAdmin}
-                key={`group1-${index}`}
+                key={`player-${index}`}
                 type="text"
                 value={player?.name || ""}
                 onChange={(e) => {
-                  const newPlayers = [...group1Players];
+                  const newPlayers = [...players];
                   newPlayers[index] =
                     newPlayers[index] ||
                     ({
                       name: "",
                       group: 1,
                     } as Player);
-                  newPlayers[index].name = (e.target.value ?? "").trim();
-                  setGroup1Players(newPlayers);
+                  newPlayers[index]!.name = (e.target.value ?? "").trim();
+                  setPlayers(newPlayers);
                 }}
                 placeholder={`${index + 1}.`}
                 className="w-full px-3 py-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
               />
             ))}
           </div>
-        </div>
-
-        {/* Group 2 */}
-        <div className="space-y-3">
-          <div>
-            <h2 className="text-sm font-semibold mb-1">Grupo 2</h2>
-            <p className="text-xs text-muted-foreground">Pangarés</p>
-          </div>
           <div className="space-y-2">
-            {group2Players.map((player, index) => (
+            {players.slice(16, 32).map((player, index) => (
               <input
                 disabled={!isAdmin}
-                key={`group2-${index}`}
+                key={`player-${index + 16}`}
                 type="text"
                 value={player?.name || ""}
                 onChange={(e) => {
-                  const newPlayers = [...group2Players];
-                  newPlayers[index] =
-                    newPlayers[index] ||
+                  const newPlayers = [...players];
+                  const actualIndex = index + 16;
+                  newPlayers[actualIndex] =
+                    newPlayers[actualIndex] ||
                     ({
                       name: "",
-                      group: 2,
+                      group: 1,
                     } as Player);
-                  newPlayers[index].name = e.target.value;
-                  setGroup2Players(newPlayers);
+                  newPlayers[actualIndex]!.name = (e.target.value ?? "").trim();
+                  setPlayers(newPlayers);
                 }}
-                placeholder={`${index + 1}.`}
+                placeholder={`${index + 17}.`}
                 className="w-full px-3 py-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
               />
             ))}

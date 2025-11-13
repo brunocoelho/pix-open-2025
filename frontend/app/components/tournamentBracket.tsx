@@ -72,10 +72,10 @@ export default function TournamentBracket({ isAdmin }: { isAdmin: boolean }) {
           ...uiMatch,
           _id: apiMatch._id,
           double1: double1Data
-            ? `${double1Data.player1.name} / ${double1Data.player2.name}`
+            ? `${double1Data.player1?.name} / ${double1Data.player2?.name}`
             : undefined,
           double2: double2Data
-            ? `${double2Data.player1.name} / ${double2Data.player2.name}`
+            ? `${double2Data.player1?.name} / ${double2Data.player2?.name}`
             : undefined,
           double1Id:
             typeof apiMatch.double1 === "string"
@@ -187,22 +187,22 @@ export default function TournamentBracket({ isAdmin }: { isAdmin: boolean }) {
     const double1Id = selectedMatch.double1
       ? doubles.find(
           (d) =>
-            `${d.player1.name} / ${d.player2.name}` === selectedMatch.double1
+            `${d.player1?.name} / ${d.player2?.name}` === selectedMatch.double1
         )?._id ||
         doubles.find(
           (d) =>
-            `${d.player1.name} / ${d.player2.name}` === selectedMatch.double1
+            `${d.player1?.name} / ${d.player2?.name}` === selectedMatch.double1
         )?.id
       : undefined;
 
     const double2Id = selectedMatch.double2
       ? doubles.find(
           (d) =>
-            `${d.player1.name} / ${d.player2.name}` === selectedMatch.double2
+            `${d.player1?.name} / ${d.player2?.name}` === selectedMatch.double2
         )?._id ||
         doubles.find(
           (d) =>
-            `${d.player1.name} / ${d.player2.name}` === selectedMatch.double2
+            `${d.player1?.name} / ${d.player2?.name}` === selectedMatch.double2
         )?.id
       : undefined;
 
@@ -243,8 +243,8 @@ export default function TournamentBracket({ isAdmin }: { isAdmin: boolean }) {
       ].concat(
         doubles
           .map((d) => ({
-            value: `${d.player1.name} / ${d.player2.name}`,
-            label: `${d.player1.name} / ${d.player2.name}`,
+            value: `${d.player1?.name} / ${d.player2?.name}`,
+            label: `${d.player1?.name} / ${d.player2?.name}`,
           }))
           .sort((a, b) => a.label.localeCompare(b.label))
       ),

@@ -81,15 +81,15 @@ export default function PlayersTab({ isAdmin }: { isAdmin: boolean }) {
             ))}
           </div>
           <div className="space-y-2">
-            {players.slice(16, 28).map((player, index) => (
+            {players.slice(14, 28).map((player, index) => (
               <input
                 disabled={!isAdmin}
-                key={`player-${index + 16}`}
+                key={`player-${index + 14}`}
                 type="text"
                 value={player?.name || ""}
                 onChange={(e) => {
                   const newPlayers = [...players];
-                  const actualIndex = index + 16;
+                  const actualIndex = index + 14;
                   newPlayers[actualIndex] =
                     newPlayers[actualIndex] ||
                     ({

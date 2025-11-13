@@ -58,7 +58,7 @@ export default function PlayersTab({ isAdmin }: { isAdmin: boolean }) {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            {players.slice(0, 16).map((player, index) => (
+            {players.slice(0, 14).map((player, index) => (
               <input
                 disabled={!isAdmin}
                 key={`player-${index}`}
@@ -81,7 +81,7 @@ export default function PlayersTab({ isAdmin }: { isAdmin: boolean }) {
             ))}
           </div>
           <div className="space-y-2">
-            {players.slice(16, 32).map((player, index) => (
+            {players.slice(16, 28).map((player, index) => (
               <input
                 disabled={!isAdmin}
                 key={`player-${index + 16}`}

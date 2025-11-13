@@ -524,28 +524,21 @@ function MatchCard({ match, onClick }: { match: Match; onClick: () => void }) {
       className="border border-border rounded-lg bg-card hover:bg-accent transition-colors text-left"
     >
       <div className="border-b border-border px-3 py-2">
-        <div className="text-xs font-medium truncate">
-          {match.double1 || "Dupla 1"}
-        </div>
-        <div className="text-xs text-muted-foreground mt-0.5">
-          {match.score1 || "-"}
+        <div className="text-xs font-medium truncate flex justify-between">
+          <span>{match.double1 || "Dupla 1"}</span>
+          <span>
+            <b>{match.score1 || "-"}</b>
+          </span>
         </div>
       </div>
       <div className="px-3 py-2">
-        <div className="text-xs font-medium truncate">
-          {match.double2 || "Dupla 2"}
-        </div>
-        <div className="text-xs text-muted-foreground mt-0.5">
-          {match.score2 || "-"}
+        <div className="text-xs font-medium truncate flex justify-between">
+          <span>{match.double2 || "Dupla 2"}</span>
+          <span>
+            <b>{match.score2 || "-"}</b>
+          </span>
         </div>
       </div>
-      {match.winner && (
-        <div className="border-t border-border px-3 py-1.5 bg-primary/10">
-          <div className="text-xs font-semibold text-primary truncate">
-            Vencedor: {match.winner.split(" / ")[0]}
-          </div>
-        </div>
-      )}
     </button>
   );
 }

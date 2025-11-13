@@ -17,7 +17,7 @@ export default function Main() {
           Pix Open 2025 🎾
         </h1>
 
-        <Tabs.Root defaultValue="jogadores" className="w-full">
+        <Tabs.Root defaultValue="partidas" className="w-full">
           <Tabs.List className="flex border-b border-border mb-6">
             <Tabs.Trigger
               value="jogadores"

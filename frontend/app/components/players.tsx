@@ -53,55 +53,66 @@ export default function PlayersTab({ isAdmin }: { isAdmin: boolean }) {
         <div>
           <h2 className="text-sm font-semibold mb-1">Jogadores</h2>
           <p className="text-xs text-muted-foreground">
-            Lista de todos os jogadores
+            Lista de todos os jogadores sem separação por grupo.
           </p>
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             {players.slice(0, 14).map((player, index) => (
-              <input
-                disabled={!isAdmin}
-                key={`player-${index}`}
-                type="text"
-                value={player?.name || ""}
-                onChange={(e) => {
-                  const newPlayers = [...players];
-                  newPlayers[index] =
-                    newPlayers[index] ||
-                    ({
-                      name: "",
-                      group: 1,
-                    } as Player);
-                  newPlayers[index]!.name = (e.target.value ?? "").trim();
-                  setPlayers(newPlayers);
-                }}
-                placeholder={`${index + 1}.`}
-                className="w-full px-3 py-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-              />
+              <div key={`player-${index}`} className="flex items-center gap-2">
+                <div className="flex-shrink-0 w-8 h-10 flex items-center justify-center bg-muted rounded-md text-sm font-semibold text-muted-foreground">
+                  {index + 1}
+                </div>
+                <input
+                  disabled={!isAdmin}
+                  type="text"
+                  value={player?.name || ""}
+                  onChange={(e) => {
+                    const newPlayers = [...players];
+                    newPlayers[index] =
+                      newPlayers[index] ||
+                      ({
+                        name: "",
+                        group: 1,
+                      } as Player);
+                    newPlayers[index]!.name = (e.target.value ?? "").trim();
+                    setPlayers(newPlayers);
+                  }}
+                  placeholder="Nome do jogador"
+                  className="flex-1 px-3 py-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
             ))}
           </div>
           <div className="space-y-2">
             {players.slice(14, 28).map((player, index) => (
-              <input
-                disabled={!isAdmin}
+              <div
                 key={`player-${index + 14}`}
-                type="text"
-                value={player?.name || ""}
-                onChange={(e) => {
-                  const newPlayers = [...players];
-                  const actualIndex = index + 14;
-                  newPlayers[actualIndex] =
-                    newPlayers[actualIndex] ||
-                    ({
-                      name: "",
-                      group: 1,
-                    } as Player);
-                  newPlayers[actualIndex]!.name = e.target.value ?? "";
-                  setPlayers(newPlayers);
-                }}
-                placeholder={`${index + 17}.`}
-                className="w-full px-3 py-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-              />
+                className="flex items-center gap-2"
+              >
+                <div className="flex-shrink-0 w-8 h-10 flex items-center justify-center bg-muted rounded-md text-sm font-semibold text-muted-foreground">
+                  {index + 15}
+                </div>
+                <input
+                  disabled={!isAdmin}
+                  type="text"
+                  value={player?.name || ""}
+                  onChange={(e) => {
+                    const newPlayers = [...players];
+                    const actualIndex = index + 14;
+                    newPlayers[actualIndex] =
+                      newPlayers[actualIndex] ||
+                      ({
+                        name: "",
+                        group: 1,
+                      } as Player);
+                    newPlayers[actualIndex]!.name = e.target.value ?? "";
+                    setPlayers(newPlayers);
+                  }}
+                  placeholder="Nome do jogador"
+                  className="flex-1 px-3 py-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
             ))}
           </div>
         </div>

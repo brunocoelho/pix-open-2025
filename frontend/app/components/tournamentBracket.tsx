@@ -1,35 +1,122 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import * as Select from "@radix-ui/react-select";
 import * as Dialog from "@radix-ui/react-dialog";
 import { ChevronDownIcon, CheckIcon } from "@radix-ui/react-icons";
-import { getDoubles, type Double } from "@/lib/api";
-import { useQuery } from "@tanstack/react-query";
+import {
+  getMatches,
+  createMatch,
+  updateMatch,
+  type Match as APIMatch,
+  getDoubles,
+} from "@/lib/api";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface Match {
+  _id?: string;
   id: string;
   round: "R16" | "R8" | "SEMI" | "FINAL";
   position: number;
   double1?: string;
   double2?: string;
+  double1Id?: string;
+  double2Id?: string;
   score1?: string;
   score2?: string;
   winner?: string;
 }
 
 export default function TournamentBracket({ isAdmin }: { isAdmin: boolean }) {
-  const [matches, setMatches] = useState<Match[]>(initializeMatches());
-  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [doubles, setDoubles] = useState<Double[]>([]);
+  // const [doubles, setDoubles] = useState<Double[]>([]);
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
+  const queryClient = useQueryClient();
 
-  useQuery({
+  const { data: doubles = [] } = useQuery({
     queryKey: ["doubles"],
-    queryFn: async () => {
-      const doubles = await getDoubles();
-      setDoubles(doubles);
-      return doubles;
+    queryFn: getDoubles,
+  });
+
+  const { data: apiMatches } = useQuery({
+    queryKey: ["matches"],
+    queryFn: getMatches,
+  });
+
+  // Transform API matches to UI format
+  useEffect(() => {
+    if (!apiMatches || !doubles.length) {
+      setMatches(initializeMatches());
+      return;
+    }
+
+    const transformedMatches: Match[] = [];
+
+    // Create all possible matches
+    const allMatches = initializeMatches();
+
+    // Map API matches to UI format
+    allMatches.forEach((uiMatch) => {
+      const apiMatch = apiMatches.find(
+        (m) => m.round === uiMatch.round && m.position === uiMatch.position
+      );
+
+      if (apiMatch) {
+        const double1Data =
+          typeof apiMatch.double1 === "object" ? apiMatch.double1 : null;
+        const double2Data =
+          typeof apiMatch.double2 === "object" ? apiMatch.double2 : null;
+
+        transformedMatches.push({
+          ...uiMatch,
+          _id: apiMatch._id,
+          double1: double1Data
+            ? `${double1Data.player1.name} / ${double1Data.player2.name}`
+            : undefined,
+          double2: double2Data
+            ? `${double2Data.player1.name} / ${double2Data.player2.name}`
+            : undefined,
+          double1Id:
+            typeof apiMatch.double1 === "string"
+              ? apiMatch.double1
+              : double1Data?._id,
+          double2Id:
+            typeof apiMatch.double2 === "string"
+              ? apiMatch.double2
+              : double2Data?._id,
+          score1: apiMatch.scoreDouble1,
+          score2: apiMatch.scoreDouble2,
+        });
+      } else {
+        transformedMatches.push(uiMatch);
+      }
+    });
+
+    setMatches(transformedMatches);
+  }, [apiMatches, doubles]);
+
+  const updateMatchMutation = useMutation({
+    mutationFn: async ({
+      matchId,
+      data,
+    }: {
+      matchId: string;
+      data: Partial<APIMatch>;
+    }) => {
+      return updateMatch(matchId, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["matches"] });
+    },
+  });
+
+  const createMatchMutation = useMutation({
+    mutationFn: async (data: APIMatch) => {
+      return createMatch(data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["matches"] });
     },
   });
 
@@ -92,15 +179,77 @@ export default function TournamentBracket({ isAdmin }: { isAdmin: boolean }) {
     setSelectedMatch({ ...selectedMatch, ...updates });
   };
 
-  const handleSaveMatch = () => {
-    setDialogOpen(false);
-    setSelectedMatch(null);
+  const handleSaveMatch = async () => {
+    if (!selectedMatch) return;
+    debugger;
+
+    // Find the double IDs based on selected names
+    const double1Id = selectedMatch.double1
+      ? doubles.find(
+          (d) =>
+            `${d.player1.name} / ${d.player2.name}` === selectedMatch.double1
+        )?._id ||
+        doubles.find(
+          (d) =>
+            `${d.player1.name} / ${d.player2.name}` === selectedMatch.double1
+        )?.id
+      : undefined;
+
+    const double2Id = selectedMatch.double2
+      ? doubles.find(
+          (d) =>
+            `${d.player1.name} / ${d.player2.name}` === selectedMatch.double2
+        )?._id ||
+        doubles.find(
+          (d) =>
+            `${d.player1.name} / ${d.player2.name}` === selectedMatch.double2
+        )?.id
+      : undefined;
+
+    const matchData: Partial<APIMatch> = {
+      round: selectedMatch.round,
+      position: selectedMatch.position,
+      double1: double1Id,
+      double2: double2Id,
+      scoreDouble1: selectedMatch.score1,
+      scoreDouble2: selectedMatch.score2,
+    };
+
+    try {
+      if (selectedMatch._id) {
+        // Update existing match
+        await updateMatchMutation.mutateAsync({
+          matchId: selectedMatch._id,
+          data: matchData,
+        });
+      } else {
+        // Create new match
+        await createMatchMutation.mutateAsync(matchData as APIMatch);
+      }
+      setDialogOpen(false);
+      setSelectedMatch(null);
+    } catch (error) {
+      console.error("Failed to save match:", error);
+    }
   };
 
-  const doublesOptions = doubles.map((d) => ({
-    value: `${d.player1} / ${d.player2}`,
-    label: `${d.player1} / ${d.player2}`,
-  }));
+  const doublesOptions = useMemo(
+    () =>
+      [
+        {
+          value: "bye",
+          label: "Limpar Campo",
+        },
+      ].concat(
+        doubles
+          .map((d) => ({
+            value: `${d.player1.name} / ${d.player2.name}`,
+            label: `${d.player1.name} / ${d.player2.name}`,
+          }))
+          .sort((a, b) => a.label.localeCompare(b.label))
+      ),
+    [doubles]
+  );
 
   return (
     <>
@@ -295,7 +444,7 @@ export default function TournamentBracket({ isAdmin }: { isAdmin: boolean }) {
                 </div>
 
                 {/* Winner Selection */}
-                <div>
+                {/* <div>
                   <label className="block text-sm font-medium mb-2">
                     Vencedor
                   </label>
@@ -344,7 +493,7 @@ export default function TournamentBracket({ isAdmin }: { isAdmin: boolean }) {
                       </Select.Content>
                     </Select.Portal>
                   </Select.Root>
-                </div>
+                </div> */}
 
                 <div className="flex gap-3 mt-6">
                   <Dialog.Close asChild>

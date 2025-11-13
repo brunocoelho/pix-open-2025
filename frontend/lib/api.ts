@@ -10,9 +10,20 @@ export interface Player {
 }
 
 export interface Double {
+  _id?: string;
   id?: string;
   player1: Player;
   player2: Player;
+}
+
+export interface Match {
+  _id?: string;
+  double1?: Double | string;
+  double2?: Double | string;
+  scoreDouble1?: string;
+  scoreDouble2?: string;
+  round?: "R16" | "R8" | "SEMI" | "FINAL";
+  position?: number;
 }
 
 export async function createPlayers(players: Player[]): Promise<{
@@ -77,6 +88,56 @@ export async function getDoubles(): Promise<Double[]> {
 
   if (!response.ok) {
     throw new Error("Failed to fetch doubles");
+  }
+
+  return response.json();
+}
+
+export async function getMatches(): Promise<Match[]> {
+  const response = await fetch(`${API_BASE_URL}/matches`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch matches");
+  }
+
+  return response.json();
+}
+
+export async function createMatch(match: Match): Promise<Match> {
+  const response = await fetch(`${API_BASE_URL}/matches`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(match),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create match");
+  }
+
+  return response.json();
+}
+
+export async function updateMatch(
+  id: string,
+  match: Partial<Match>
+): Promise<Match> {
+  const response = await fetch(`${API_BASE_URL}/matches/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(match),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update match");
   }
 
   return response.json();

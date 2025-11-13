@@ -1,29 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { createDoubles, type Double, getDoubles } from "@/lib/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createDoubles, getDoubles } from "@/lib/api";
 import { Callout } from "@radix-ui/themes";
 
 export default function DoublesTab({ isAdmin }: { isAdmin: boolean }) {
-  const [doubles, setDoubles] = useState<Double[]>([]);
   const [showSuccessMessage, setShowSuccessMessage] = useState("");
+  const queryClient = useQueryClient();
 
-  useQuery({
+  const { data: doubles = [] } = useQuery({
     queryKey: ["doubles"],
-    queryFn: async () => {
-      const doubles = await getDoubles();
-      setDoubles(doubles);
-      return doubles;
-    },
+    queryFn: getDoubles,
   });
 
   const createDoublesMutation = useMutation({
     mutationFn: createDoubles,
-    onSuccess: (data) => {
-      // alert("Duplas criadas com sucesso!");
-      setDoubles(data);
+    onSuccess: () => {
       setShowSuccessMessage("Duplas criadas!");
+      queryClient.invalidateQueries({ queryKey: ["doubles"] });
       setTimeout(() => {
         setShowSuccessMessage("");
       }, 3000);

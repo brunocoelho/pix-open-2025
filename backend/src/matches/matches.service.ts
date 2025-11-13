@@ -37,10 +37,21 @@ export class MatchesService {
       .exec();
   }
 
-  // Update a match
+  // Update a match - replaces the entire document
   async update(id: string, updateMatchDto: UpdateMatchDto) {
     return this.matchModel
-      .findByIdAndUpdate(id, updateMatchDto, { new: true })
+      .findByIdAndUpdate(
+        id,
+        {
+          double1: updateMatchDto.double1 || null,
+          double2: updateMatchDto.double2 || null,
+          scoreDouble1: updateMatchDto.scoreDouble1 || null,
+          scoreDouble2: updateMatchDto.scoreDouble2 || null,
+          round: updateMatchDto.round,
+          position: updateMatchDto.position,
+        },
+        { new: true, overwrite: false },
+      )
       .populate({
         path: 'double1',
         populate: [

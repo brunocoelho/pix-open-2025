@@ -96,7 +96,7 @@ export default function PlayersTab({ isAdmin }: { isAdmin: boolean }) {
                       name: "",
                       group: 1,
                     } as Player);
-                  newPlayers[actualIndex]!.name = (e.target.value ?? "").trim();
+                  newPlayers[actualIndex]!.name = e.target.value ?? "";
                   setPlayers(newPlayers);
                 }}
                 placeholder={`${index + 17}.`}

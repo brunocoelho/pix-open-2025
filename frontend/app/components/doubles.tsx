@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createDoubles, getDoubles } from "@/lib/api";
-import { Callout } from "@radix-ui/themes";
 
 export default function DoublesTab({ isAdmin }: { isAdmin: boolean }) {
   const [showSuccessMessage, setShowSuccessMessage] = useState("");
@@ -66,7 +65,7 @@ export default function DoublesTab({ isAdmin }: { isAdmin: boolean }) {
           </div>
         </div>
       )}
-      {isAdmin && (
+      {/* {isAdmin && (
         <div className="grid grid-cols-2 gap-3 pt-6">
           <button
             className="py-3 px-4 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -82,7 +81,7 @@ export default function DoublesTab({ isAdmin }: { isAdmin: boolean }) {
             </Callout.Root>
           )}
         </div>
-      )}
+      )} */}
     </div>
   );
 }

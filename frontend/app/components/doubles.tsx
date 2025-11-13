@@ -47,7 +47,7 @@ export default function DoublesTab({ isAdmin }: { isAdmin: boolean }) {
                 <tr className="bg-muted">
                   <th className="py-3 px-4 text-left text-sm font-medium">#</th>
                   <th className="py-3 px-4 text-left text-sm font-medium">
-                    Pro
+                    Profissional
                   </th>
                   <th className="py-3 px-4 text-left text-sm font-medium">
                     Pangaré

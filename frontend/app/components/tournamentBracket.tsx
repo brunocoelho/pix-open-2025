@@ -518,6 +518,10 @@ export default function TournamentBracket({ isAdmin }: { isAdmin: boolean }) {
 }
 
 function MatchCard({ match, onClick }: { match: Match; onClick: () => void }) {
+  const double2 =
+    match.round === "R16" && !!match.double1 && !match.double2
+      ? "Bye"
+      : match.double2;
   return (
     <button
       onClick={onClick}
@@ -525,7 +529,7 @@ function MatchCard({ match, onClick }: { match: Match; onClick: () => void }) {
     >
       <div className="border-b border-border px-3 py-2">
         <div className="text-xs font-medium truncate flex justify-between">
-          <span>{match.double1 || "Dupla 1"}</span>
+          <span>{match.double1 || "--"}</span>
           <span>
             <b>{match.score1 || "-"}</b>
           </span>
@@ -533,7 +537,7 @@ function MatchCard({ match, onClick }: { match: Match; onClick: () => void }) {
       </div>
       <div className="px-3 py-2">
         <div className="text-xs font-medium truncate flex justify-between">
-          <span>{match.double2 || "Dupla 2"}</span>
+          <span>{double2 || "--"}</span>
           <span>
             <b>{match.score2 || "-"}</b>
           </span>

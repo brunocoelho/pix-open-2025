@@ -59,8 +59,11 @@ export default function PlayersTab({ isAdmin }: { isAdmin: boolean }) {
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             {players.slice(0, 14).map((player, index) => (
-              <div key={`player-${index}`} className="flex items-center gap-2">
-                <div className="flex-shrink-0 w-8 h-10 flex items-center justify-center bg-muted rounded-md text-sm font-semibold text-muted-foreground">
+              <div
+                key={`player-${index}`}
+                className="grid grid-cols-[18px_1fr] gap-3 items-center"
+              >
+                <div className="text-sm font-medium text-muted-foreground">
                   {index + 1}
                 </div>
                 <input
@@ -79,7 +82,7 @@ export default function PlayersTab({ isAdmin }: { isAdmin: boolean }) {
                     setPlayers(newPlayers);
                   }}
                   placeholder="Nome do jogador"
-                  className="flex-1 px-3 py-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="px-3 py-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring min-w-0"
                 />
               </div>
             ))}
@@ -88,9 +91,9 @@ export default function PlayersTab({ isAdmin }: { isAdmin: boolean }) {
             {players.slice(14, 28).map((player, index) => (
               <div
                 key={`player-${index + 14}`}
-                className="flex items-center gap-2"
+                className="grid grid-cols-[18px_1fr] gap-3 items-center"
               >
-                <div className="flex-shrink-0 w-8 h-10 flex items-center justify-center bg-muted rounded-md text-sm font-semibold text-muted-foreground">
+                <div className="text-sm font-medium text-muted-foreground">
                   {index + 15}
                 </div>
                 <input
@@ -110,7 +113,7 @@ export default function PlayersTab({ isAdmin }: { isAdmin: boolean }) {
                     setPlayers(newPlayers);
                   }}
                   placeholder="Nome do jogador"
-                  className="flex-1 px-3 py-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="px-3 py-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring min-w-0"
                 />
               </div>
             ))}
